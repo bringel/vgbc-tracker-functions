@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --cwd ./functions
       - name: deploy
         uses: w9jds/firebase-action@v1.0.1
         if: success()
