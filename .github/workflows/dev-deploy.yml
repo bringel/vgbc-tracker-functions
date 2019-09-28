@@ -1,0 +1,24 @@
+name: Develop CI
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Dependencies
+        run: yarn install
+      - name: deploy
+        uses: w9jds/firebase-action@v1.0.1
+        if: success()
+        with:
+          args: deploy --only functions
+        env:
+          PROJECT_ID: vgbc-tracker-dev
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_DEV }}
