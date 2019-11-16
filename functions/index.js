@@ -95,7 +95,7 @@ exports.selectGameOfTheMonth = functions.https.onRequest((request, response) => 
   const { gameID, month, year } = request.body;
   const config = functions.config();
 
-  fetch(`https://www.giantbomb.com/api/game/${gameID}?api_key=${config.giantbomb.apikey}`)
+  fetch(`https://www.giantbomb.com/api/game/${gameID}?api_key=${config.giantbomb.apikey}&format=json`)
     .then(res => res.json())
     .then(game => {
       // return {
