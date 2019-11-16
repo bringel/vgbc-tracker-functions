@@ -93,6 +93,7 @@ exports.searchForGame = functions.https.onRequest((request, response) => {
 
 exports.selectGameOfTheMonth = functions.https.onRequest((request, response) => {
   const { gameID, month, year } = request.body;
+  const config = functions.config();
 
   fetch(`https://www.giantbomb.com/api/game/${gameID}?api_key=${config.giantbomb.apikey}`)
     .then(res => res.json())
