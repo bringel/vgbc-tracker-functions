@@ -94,29 +94,11 @@ exports.searchForGame = functions.https.onRequest((request, response) => {
 exports.selectGameOfTheMonth = functions.https.onRequest((request, response) => {
   const { gameID, month, year } = request.body;
   const config = functions.config();
-
+  console.log(config);
   fetch(`https://www.giantbomb.com/api/game/${gameID}?api_key=${config.giantbomb.apikey}&format=json`)
     .then(res => res.json())
-    .then(game => {
-      // return {
-      //   giantBombID: `${apiResponse.id}`,
-      //   title: apiResponse.name,
-      //   releaseDate: apiResponse.original_release_date
-      //     ? apiResponse.original_release_date
-      //     : new Date(
-      //         apiResponse.expected_release_year,
-      //         apiResponse.expected_release_month - 1,
-      //         apiResponse.expected_release_day
-      //       ).toISOString(),
-      //   coverURL: apiResponse.image.original_url,
-      //   current: currentGame,
-      //   activeMonth: activeMonth,
-      //   activeYear: activeYear,
-      //   platforms: platforms,
-      //   description: descriptionText,
-      //   storeLinks: []
-      // };
-
+    .then(jsonResult => {
+      const game = jsonResult.results;
       const platforms = game.platforms.map(p => ({ id: p.id, name: p.name }));
 
       let descriptionText = '';
@@ -129,7 +111,7 @@ exports.selectGameOfTheMonth = functions.https.onRequest((request, response) => 
           .text();
       }
 
-      const suggestionDoc = {
+      const gameDoc = {
         giantBombID: game.id,
         title: game.name,
         releaseDate: game.original_release_date
@@ -154,13 +136,13 @@ exports.selectGameOfTheMonth = functions.https.onRequest((request, response) => 
       };
 
       const firestore = admin.firestore();
-      return firestore.collection('games').add(suggestionDoc);
+      return firestore.collection('games').add(gameDoc);
     })
     .then(doc => {
       const firestore = admin.firestore();
       // TODO: ditch the current flag altogther so that it doesn't need to be updated
-      firestore
-        .collection('games')
+      const games = firestore.collection('games');
+      games
         .where('current', '==', true)
         .get()
         .then(snapshot => {
