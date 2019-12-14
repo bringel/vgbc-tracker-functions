@@ -122,7 +122,6 @@ exports.selectGameOfTheMonth = functions.https.onRequest((request, response) => 
               game.expected_release_day
             ).toISOString(),
         coverURL: game.image.original_url,
-        current: true,
         activeMonth: month,
         activeYear: year,
         platforms: platforms,
